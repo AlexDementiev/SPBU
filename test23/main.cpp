@@ -1,59 +1,54 @@
 #include <iostream>
-#include <ctime>
-#include "list.h"
+#include <fstream>
 
 using namespace std;
 
-void random(List *list, int size)
+void output(char *string, int position)
 {
-    unsigned randValue = 11;
-    srand(randValue);
-
-    int position = 0;
-    while (position < size)
+    while (string[position] != '\0')
     {
-        add(list,rand() % 10);
+        cout << string[position];
         position++;
-    }
-}
-
-void sort(List *list, int size)
-{
-    int counter = 1;
-    while (counter < size)
-    {
-        int value = get(list,counter);
-        int position = counter - 1;
-        while (position >= 0 && get(list,position) > value)
-        {
-            swapElements(list,position + 1,position);
-            position--;
-        }
-        change(list, position + 1,value);
-        counter++;
-    }
-}
-
-void output(List *list, int size)
-{
-    int index = 0;
-    while (index < size)
-    {
-        cout << get(list,index) << " ";
-        index++;
     }
     cout << endl;
 }
 
+void analysis(char* string, int size)
+{
+    int index = 0;
+    while (index < size && string[index] != ';')
+        index++;
+    if (index != size)
+        output(string, index);
+}
+
+void initString(char *string, int size)
+{
+    int counter = 0;
+    while (counter < size)
+    {
+        string[counter] = '\0';
+        counter++;
+    }
+}
+
 int main()
 {
-    List *list = createList();
-    random(list, 10);
-    output(list, 10);
+    char *string = new char[256];
+    initString(string, 256);
 
-    sort(list, 10);
-    output(list, 10);
-
-    deleteList(list);
+    ifstream input;
+    input.open("input.txt");
+    if (input.is_open())
+    {
+        while (input)
+        {
+            initString(string, 256);
+            input >> string;
+            if (string[0] == '\0')
+                return 0;
+            analysis(string, 256);
+        }
+    }
     return 0;
 }
