@@ -1,77 +1,50 @@
 #include <iostream>
+#include <fstream>
 
 using namespace std;
 
-void quikSort(int numbers[], int left, int right) {
-    int l = left;
-    int r = right;
-    int line = numbers[(left + right) / 2];
+void reverse(char *number, ostream &output)
+{
+    int length = 0;
+    while (number[length] != '\0')
+        length++;
 
-    while (l < r){
+    length--;
 
-        while (numbers[l] < line) {
-            l++;
-        }
-        while (numbers[r] > line) {
-            r--;
-        }
-        if (l <= r) {
-            int tmp = numbers[l];
-            numbers[l] =  numbers[r];
-            numbers[r] = tmp;
-            l++;
-            r--;
-        }
-
-        if (l < right)
-            quikSort(numbers, l, right);
-        if (r > left)
-            quikSort(numbers, left, r);
+    int index = 0;
+    while (index <= length / 2)
+    {
+        int tmp = number[index];
+        number[index] = number[length - index];
+        number[length - index] = tmp;
+        index++;
     }
+
+    for (int i = 0; i <= length; i++)
+        output << number[i];
+    output << ' ';
 }
 
 int main()
 {
-    int const size = 100;
-    int *numbers = new int[size];
-
-    int counter = 0;
-    while (counter < size)
+    ifstream input;
+    input.open("input.txt");
+    if (!input.is_open())
     {
-        numbers[counter] = 0;
-        counter++;
+        cout << "File not found.";
+        return 0;
     }
 
-    cout << "Enter numbers: ";
+    ofstream output;
+    output.open("output.txt");
 
-    int digit = 0;
-    counter = 0;
-    cin >> digit;
-    while (digit != 0)
+    char buf[255] = {'\0'};
+    while (input >> buf)
     {
-        numbers[counter] = digit;
-        counter++;
-        cin >> digit;
+        reverse(buf, output);
     }
 
-    quikSort(numbers, 0, counter);
-
-    int dimension = counter;
-    counter = 1;
-    while (counter <= dimension)
-    {
-        cout << numbers[counter] << ": ";
-        int value = numbers[counter];
-        counter++;
-
-        int count = 1;
-        while (numbers[counter] == value)
-        {
-            count++;
-            counter++;
-        }
-
-        cout << count << ";\n";
-    }
+    input.close();
+    output.close();
     return 0;
 }
