@@ -55,5 +55,7 @@ int main()
     updateValue(students, size);
     output(students, size);
 
+    delete[] students;
+
     return 0;
 }
