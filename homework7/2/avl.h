@@ -16,4 +16,4 @@ void remove(AVLTree *tree, int value);
 
 void printLeft(AVLTree *tree);
 void printTree(AVLTree *tree);
-void printRigth(AVLTree *tree);
+void printRight(AVLTree *tree);

@@ -1,69 +1,73 @@
 #include <iostream>
-#include "kit.h"
+#include "set.h"
 using namespace std;
 
 void printInstructions()
 {
-    cout << "KIT" << endl;
+    cout << "SET" << endl;
     cout << "0 - exit" << endl;
     cout << "1 - add" << endl;
     cout << "2 - pop" << endl;
     cout << "3 - check" << endl;
-    cout << "4 - print" << endl;
+    cout << "4 - print increasing order" << endl;
+    cout << "5 - print decreasing order" << endl;
+    cout << "6 - print tree" << endl;
 }
 
 int main()
 {
-    Kit *kit = createKit();
+    Set *set = createSet();
 
     printInstructions();
-    int choise = -1;
-    cin >> choise;
 
-    while (choise != 0)
+    enum {exit, addToSet, removeFromSet, check, printIncreasingOrder, printDecreasingOrder, printTree};
+
+
+    int choice = 0;
+    cin >> choice;
+    while (choice != 0)
     {
         int value = 0;
-        switch (choise)
+        switch (choice)
         {
-            case 1:
+            case addToSet:
                 cout << "Enter number to add: ";
                 cin >> value;
-                add(kit, value);
+                add(set, value);
                 break;
 
-            case 2:
+            case removeFromSet:
                 cout << "Enter number to pop: ";
                 cin >> value;
-                pop(kit, value);
+                pop(set, value);
                 break;
 
-            case 3:
+            case check:
                 cout << "Enter number to check: ";
                 cin >> value;
-                cout << value << (isContained(kit, value) ? "" : " not") << " in kit" << endl;
+                cout << value << (isContained(set, value) ? "" : " not") << " in set" << endl;
                 break;
 
-            case 4:
-                cout << " 1 - Increasing Order \n 2 - Decreasing order \n 3 - Tree form" << endl;
-                cin >> value;
-                if (value == 1)
-                    print(kit);
-                else if (value == 2)
-                    printReverse(kit);
-                else if (value == 3)
-                    printKit(kit);
-                else
-                    cout << "Unknown command" << endl;
+            case printIncreasingOrder:
+                print(set);
                 break;
+            case printDecreasingOrder:
+                printReverse(set);
+                break;
+            case printTree:
+                printSet(set);
+                break;
+            case exit:
+                return 0;
 
             default:
                 cout << "Unknown command" << endl;
 
         }
-        cin >> choise;
+        cin >> choice;
     }
 
-    deleteKit(kit);
+    deleteSet(set);
 
     return 0;
 }

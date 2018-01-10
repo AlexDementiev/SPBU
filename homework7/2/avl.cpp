@@ -52,19 +52,19 @@ void printTree(AVLTree *tree)
     std::cout << "\n";
 }
 
-void printRigthNode(AVLNode *node)
+void printRightNode(AVLNode *node)
 {
     if (node == nullptr)
         return;
 
-    printRigthNode(node->rigth);
+    printRightNode(node->rigth);
     std::cout << node->value;
-    printRigthNode(node->left);
+    printRightNode(node->left);
 }
 
-void printRigth(AVLTree *tree)
+void printRight(AVLTree *tree)
 {
-    printRigthNode(tree->root);
+    printRightNode(tree->root);
     std::cout << "\n'";
 }
 
@@ -81,11 +81,11 @@ int balanceFaktor(AVLNode *node)
 void updateHeight(AVLNode *node)
 {
     int heightLeft = height(node->left);
-    int heightRigth = height(node->rigth);
-    node->height = ((heightRigth > heightLeft) ? heightRigth : heightLeft) + 1;
+    int heightRight = height(node->rigth);
+    node->height = ((heightLeft > heightRight) ? heightLeft : heightRight) + 1;
 }
 
-void rotateRigth(AVLNode *&root)
+void rotateRight(AVLNode *&root)
 {
     AVLNode *pivot = root->left;
     root->left = pivot->rigth;
@@ -112,14 +112,14 @@ void balance(AVLNode *&node)
     if (balanceFaktor(node) == 2)
     {
         if (balanceFaktor(node->rigth) < 0)
-            rotateRigth(node->rigth);
+            rotateRight(node->rigth);
         rotateLeft(node);
     }
     if (balanceFaktor(node) == -2)
     {
         if (balanceFaktor(node->left) > 0)
             rotateLeft(node->left);
-        rotateRigth(node);
+        rotateRight(node);
     }
 }
 
@@ -213,16 +213,18 @@ void removeNode(AVLNode *&node, int value)
             AVLNode *temp = node->rigth;
             delete node;
             node = temp;
+            balance(node);
         }
         else if (node->rigth == nullptr)
         {
             AVLNode *temp = node->left;
             delete node;
             node = temp;
+            balance(node);
         }
         else
         {
-            AVLNode *maxNode = findMax(node);
+            AVLNode *maxNode = findMax(node->left);
             int maxValue = maxNode->value;
             removeNode(node, maxValue);
             node->value = maxValue;
@@ -235,8 +237,6 @@ void removeNode(AVLNode *&node, int value)
         removeNode(node->left, value);
     else
         removeNode(node->rigth, value);
-
-    balance(node);
 }
 
 void remove(AVLTree *tree, int value)
