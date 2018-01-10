@@ -1,5 +1,5 @@
 #include <iostream>
-#include "expressionTree.h"
+#include "expressiontree.h"
 
 struct Node
 {
@@ -36,6 +36,7 @@ void deleteNode(Node *node)
 void clearTree(ExpressionTree *tree)
 {
     deleteNode(tree->root);
+    delete tree;
 }
 
 int calculateNode(Node *node)

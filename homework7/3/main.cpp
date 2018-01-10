@@ -1,6 +1,6 @@
 #include <iostream>
 #include <fstream>
-#include <expressionTree.h>
+#include "expressiontree.h"
 
 using namespace std;
 
@@ -18,5 +18,6 @@ int main()
     clearTree(expression);
     fin.close();
 
+    clearTree(expression);
     return 0;
 }
