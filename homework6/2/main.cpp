@@ -8,7 +8,7 @@ void buildList(List *list, int size)
     int counter = 1;
     while (counter <= size)
     {
-        add(list,counter);
+        add(list, counter);
         counter++;
     }
     return;
@@ -32,13 +32,13 @@ int main()
 
     while (!isSiple(warriors))
     {
-        if (m > warriors->dimension)
-            index = m % warriors->dimension;
+        if (m > listSize(warriors))
+            index = m % listSize(warriors);
         if (index == 0)
-            index = warriors->dimension;
-        deleteElement(warriors,index);
+            index = listSize(warriors);
+        deleteElement(warriors, index);
     }
-    cout <<"The position of the surviving soldier: " <<  warriors->head->value;
+    cout <<"The position of the surviving soldier: " <<  firstElement(warriors);
     clearList(warriors);
 
     return 0;

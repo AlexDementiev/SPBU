@@ -88,5 +88,16 @@ void clearList(List *list)
 {
     while (!isEmpty(list))
         deleteElement(list,1);
+    delete list;
     return;
+}
+
+int listSize(List *list)
+{
+    return list->dimension;
+}
+
+int firstElement(List *list)
+{
+    return list->head->value;
 }

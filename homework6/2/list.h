@@ -20,3 +20,6 @@ bool isSiple(List *list);
 
 void add(List *list, int value);
 void deleteElement(List *list, int value);
+
+int listSize(List *list);
+int firstElement(List *list);
