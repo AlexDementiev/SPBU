@@ -43,7 +43,10 @@ int main()
             outputList(list, cout);
             break;
         case exit:
+        {
+            clearList(list);
             return 0;
+        }
         }
         cin >> choice;
     }
