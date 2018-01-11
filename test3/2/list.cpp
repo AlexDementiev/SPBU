@@ -2,7 +2,7 @@
 
 List *createList()
 {
-    List *list = new List{nullptr,0};
+    List *list = new List{nullptr, 0};
     return list;
 }
 
@@ -39,55 +39,63 @@ void add(List *list, int value)
     return;
 }
 
-void deleteElement(List *list, int value)
-{
-    if (isSiple(list))
-    {
-        if (list->head->value == value)
-            delete list->head;
-        list->head = nullptr;
-        list->dimension = 0;
+//void deleteElement(List *list, int value)
+//{
+//    if (isSiple(list))
+//    {
+//        delete list->head;
+//        list->head = nullptr;
+//        list->dimension = 0;
+//        return;
+//    }
 
-        return;
-    }
 
-    if (!isEmpty(list))
-    {
-        if (value == 1)
-        {
-            ListElement *tmp = list->head->next;
-            while (tmp->next != list->head)
-                tmp = tmp->next;
 
-            ListElement *temp = list->head;
-            list->head = list->head->next;
-            list->dimension--;
-            tmp->next = list->head;
-            delete temp;
+//    if (!isEmpty(list))
+//    {
+//        if (value == 1)
+//        {
+//            ListElement *tmp = list->head->next;
+//            while (tmp->next != list->head)
+//                tmp = tmp->next;
 
-            return ;
-        }
+//            ListElement *temp = list->head;
+//            list->head = list->head->next;
+//            list->dimension--;
+//            tmp->next = list->head;
+//            delete temp;
 
-        ListElement *tmp = list->head;
-        while (value > 2)
-        {
-            tmp = tmp->next;
-            value--;
-        }
+//            return ;
+//        }
 
-        ListElement *temp = tmp->next;
-        tmp->next = temp->next;
-        list->dimension--;
-        delete temp;
+//        ListElement *tmp = list->head;
+//        while (value > 2)
+//        {
+//            tmp = tmp->next;
+//            value--;
+//        }
 
-        list->head = tmp->next;
-    }
-}
+//        ListElement *temp = tmp->next;
+//        tmp->next = temp->next;
+//        list->dimension--;
+//        delete temp;
+
+//        list->head = tmp->next;
+//    }
+//}
 
 void clearList(List *list)
 {
-    while (!isEmpty(list))
-        deleteElement(list,1);
+    if (!isEmpty(list))
+    {
+        ListElement *tmp = list->head->next;
+        while (tmp != list->head)
+        {
+            ListElement *temp = tmp;
+            tmp = tmp->next;
+            delete temp;
+        }
+    }
     delete list->head;
     delete list;
     return;

@@ -13,7 +13,7 @@ int main()
     cout << "2 - reverse array" << endl;
     cout << "3 - print array" << endl;
 
-    enum {exit, random, reverse, print};
+    enum {random, reverse, print};
 
     List *list = createList();
 
@@ -21,7 +21,7 @@ int main()
     cin >> choice;
     while (choice != 0)
     {
-        switch (choice)
+        switch (choice - 1)
         {
         case random:
         {
@@ -42,11 +42,11 @@ int main()
         case print:
             outputList(list, cout);
             break;
-        case exit:
-        {
-            clearList(list);
-            return 0;
-        }
+//        case exit:
+//        {
+//            //clearList(list);
+//            return 0;
+//        }
         }
         cin >> choice;
     }
