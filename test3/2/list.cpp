@@ -88,6 +88,7 @@ void clearList(List *list)
 {
     while (!isEmpty(list))
         deleteElement(list,1);
+    delete list->head;
     delete list;
     return;
 }
