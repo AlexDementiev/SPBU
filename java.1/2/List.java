@@ -1,11 +1,20 @@
 package com.spbu.group144.Dementiev;
 
 public class List {
-    private ListNode head, tail;
-    private int size;
+    private class ListNode {
+        private ListNode next;
+        private int value;
 
+        public ListNode (int value) {
+            this.next = null;
+            this.value = value;
+        }
+    }
+
+    private ListNode head = null;
+    private ListNode tail = null;
+    private int size;
     List() {
-        head = null;
         size = 0;
     }
 
@@ -20,12 +29,12 @@ public class List {
     public int peekBegin() {
         if (isEmpty())
             return 900009;
-        return head.getValue();
+        return head.value;
     }
 
     public void push(int value) {
         ListNode newNode = new ListNode(value);
-        newNode.setNext(head);
+        newNode.next = head;
         head = newNode;
         size++;
     }
@@ -33,11 +42,11 @@ public class List {
     public void push(int value, int index) {
         ListNode tmp = head;
         for (int i = 0; i < index - 1; i++)
-            tmp = tmp.getNext();
+            tmp = tmp.next;
 
         ListNode newNode = new ListNode(value);
-        newNode.setNext(tmp.getNext());
-        tmp.setNext(newNode);
+        newNode.next = tmp.next;
+        tmp.next = newNode;
         size++;
     }
 
@@ -45,8 +54,8 @@ public class List {
         if (isEmpty())
             return -1;
 
-        int data = head.getValue();
-        head = head.getNext();
+        int data = head.value;
+        head = head.next;
         size--;
         return data;
     }
@@ -60,9 +69,9 @@ public class List {
         }
         ListNode tmp = head;
         for (int i = 0; i < index - 2; i++)
-            tmp = tmp.getNext();
-        int result = tmp.getNext().getValue();
-        tmp.setNext(tmp.getNext().getNext());
+            tmp = tmp.next;
+        int result = tmp.next.value;
+        tmp.next = tmp.next.next;
         size--;
         return result;
     }
@@ -70,9 +79,9 @@ public class List {
     public int find(int value) {
         ListNode tmp = head;
         for (int i = 0; i < getSize(); i++) {
-            if (tmp.getValue() == value)
+            if (tmp.value == value)
                 return i;
-            tmp = tmp.getNext();
+            tmp = tmp.next;
         }
         return -1;
     }
