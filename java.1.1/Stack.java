@@ -2,15 +2,18 @@ package com.spbu.group144.Dementiev;
 
 public class Stack {
     private StackElement head;
-    private StackElement tail;
 
+    private class StackElement {
+        int value;
+        StackElement next;
+    }
+    
     void push(int data) {
         StackElement newElement = new StackElement();
         newElement.value = data;
 
         if (head == null) {
             head = newElement;
-            tail = newElement;
         }
         else {
             newElement.next = head;
@@ -25,10 +28,9 @@ public class Stack {
             return 42;
         }
 
-        if (head == tail) {
+        if (head.next == null) {
             int data = head.value;
             head = null;
-            tail = null;
             return data;
         }
 
