@@ -15,6 +15,7 @@ int main()
     enum {start, afterSign, integerPart, afterDot, digitAfterDot, afterE, afterESign, digitAfterE, fail} status;
     status = start;
 
+    std::cout << "Enter string: ";
     char symbol = std::cin.get();
 
     while (!isEndOfString(symbol))
