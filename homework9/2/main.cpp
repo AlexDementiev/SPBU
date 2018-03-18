@@ -1,45 +1,40 @@
 #include <iostream>
 #include <fstream>
-
+#include <string.h>
 #include "huffman.h"
-#include "string.h"
 
 using namespace std;
 
 int main()
 {
-    ifstream input;
-    input.open("input.txt");
+    ifstream fin("input.txt");
+    ofstream fout("output.txt");
 
-    if (!input.is_open())
+    if (!fin.good())
     {
-        cout << "File not found\n";
-        return 0;
+        cout << "error don't open file";
+        return 1;
     }
 
-    String *string = inputString(input);
-    input.close();
+    char* string = new char[maxSize]{};
+    char* temp = new char[maxSize]{};
 
-    HuffmanCode *huffmanCode = encode(string);
-
-    ofstream output;
-    output.open("output.txt");
-
-    printHuffmanTree(huffmanCode, output);
-    output << endl;
-
-    for (int i = 0; i < stringLength(string); i++)
+    while (!fin.eof())
     {
-        printString(getCode(huffmanCode, getChar(string, i)), output);
-        output << " ";
+        fin.getline(temp, maxSize, '\n');
+        strcat(string, temp);
+        strcat(string, "\n");
     }
+    fin.getline(temp, maxSize, '\n');
+    strcat(string, temp);
+    strcat(string, "\n");
+    string[strlen(string) - 2] = '\0';
 
-    printHuffmanCodes(huffmanCode, output);
+    huffmanEncode(string, fout);
 
-    output.close();
-
-    deleteHuffmanCode(huffmanCode);
-    deleteString(string);
+    fin.close();
+    fout.close();
+    delete [] string;
+    delete [] temp;
     return 0;
-
 }
