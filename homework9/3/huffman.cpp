@@ -1,234 +1,111 @@
+#include <iostream>
+#include <cstring>
 #include "huffman.h"
-#include "priorityQueue.h"
+#include "queue.h"
 
+using namespace std;
 
-int const maxSymbolCode = 256;
+const int maxSize = 10000;
 
-
-struct HuffmanTree
+bool isLeaf(Node *node)
 {
-    HuffmanTree *left;
-    HuffmanTree *right;
-
-    bool isLeaf;
-    char symbol; // if leaf
-    int frequency;
-};
-
-
-HuffmanTree *createLeaf(char symbol, int frequency)
-{
-    HuffmanTree *newLeaf = new HuffmanTree;
-    newLeaf->left = nullptr;
-    newLeaf->right = nullptr;
-    newLeaf->symbol = symbol;
-    newLeaf->frequency = frequency;
-    newLeaf->isLeaf = true;
-
-    return newLeaf;
+    return node->symbol != -1;
 }
 
-
-void deleteHuffmanTree(HuffmanTree *tree)
+Node *createNode(int frequency, char symbol, Node *left, Node *right)
 {
-    if (tree == nullptr)
+    Node *newNode = new Node;
+    newNode->left = left;
+    newNode->right = right;
+    newNode->frequency = frequency;
+    newNode->symbol = symbol;
+    return newNode;
+}
+
+void deleteNode(Node *node)
+{
+    if (!node)
         return;
 
-    deleteHuffmanTree(tree->left);
-    deleteHuffmanTree(tree->right);
-    delete tree;
+    deleteNode(node->left);
+    deleteNode(node->right);
+    delete node;
 }
 
-HuffmanTree *mergeHuffmanTree(HuffmanTree *firstTree, HuffmanTree *secondTree)
+Node *getNode(char *tree, int &i)
 {
-    HuffmanTree *newTree = new HuffmanTree;
-    newTree->left = firstTree;
-    newTree->right = secondTree;
-    newTree->frequency = firstTree->frequency + secondTree->frequency;
-    newTree->isLeaf = false;
-
-    return newTree;
-}
-
-void deleteHuffmanCode(HuffmanCode *huffmanCode)
-{
-    deleteHuffmanTree(huffmanCode->tree);
-
-    for (int i = 0; i < maxSymbolCode; i++)
-        if (huffmanCode->codes[i] != nullptr)
-            deleteString(huffmanCode->codes[i]);
-
-    delete huffmanCode;
-}
-
-void getCodes(HuffmanTree *tree, String **codes, String *currentCode)
-{
-    if (tree->isLeaf)
+    while ((i < strlen(tree)) && ((tree[i] == ' ') || (tree[i] == ')')))
     {
-        if (stringLength(currentCode) == 0)
-        {
-            char leftSuffixCode[2] = {'0', '\0'};
-            String *leftSuffix = createString(leftSuffixCode);
-            concatenation(currentCode, leftSuffix);
-            deleteString(leftSuffix);
-        }
-        codes[(int) tree->symbol] = currentCode;
-        return;
+        i++;
     }
-
-    String *leftCode = currentCode;
-    String *rightCode = clone(currentCode);
-
-    char leftSuffixCode[2] = {'0', '\0'};
-    char rightSuffixCode[2] = {'1', '\0'};
-    String *left = createString(leftSuffixCode);
-    String *right = createString(rightSuffixCode);
-    concatenation(leftCode, left);
-    concatenation(rightCode, right);
-
-    getCodes(tree->left, codes, leftCode);
-    getCodes(tree->right, codes, rightCode);
-}
-
-String **codes(HuffmanTree *tree)
-{
-    String **codes = new String*[maxSymbolCode];
-    for (int i = 0; i < maxSymbolCode; i++)
-            codes[i] = nullptr;
-
-    char emptyString[1] = {'\0'};
-    getCodes(tree, codes, createString(emptyString));
-    return codes;
-}
-
-HuffmanCode *encode(String *string)
-{
-    int frequencies[maxSymbolCode];
-    for (int i = 0; i < maxSymbolCode; i++)
-        frequencies[i] = 0;
-
-    for (int index = 0; index < stringLength(string); index++)
-        frequencies[(int) getChar(string, index)]++;
-
-    PriorityQueue *priorityQueue = createPriorityQueue();
-    for (int current = 0; current < maxSymbolCode; current++)
-        if (frequencies[current] > 0)
-        {
-            HuffmanTree *newLeaf = createLeaf((char) current, frequencies[current]);
-            add(priorityQueue, newLeaf, frequencies[current]);
-        }
-
-    while (!isSimple(priorityQueue))
+    if ((tree[i] == '(') && (tree[i + 2] == '1'))
     {
-        HuffmanTree *firstTree = getMin(priorityQueue);
-        HuffmanTree *secondTree = getMin(priorityQueue);
-        HuffmanTree *newTree = mergeHuffmanTree(firstTree, secondTree);
-        int frequenciesNewTree = firstTree->frequency + secondTree->frequency;
-        add(priorityQueue, newTree, frequenciesNewTree);
+        Node *node = createNode(0, -1, nullptr, nullptr);
+        i += 4;
+        node->left = getNode(tree, i);
+        node->right = getNode(tree, i);
+        return node;
     }
-
-    HuffmanTree *huffmanTree = getMin(priorityQueue);
-    deletePriorityQueue(priorityQueue);
-
-    String **code = codes(huffmanTree);
-
-    HuffmanCode *huffmanCode = new HuffmanCode;
-    huffmanCode->tree = huffmanTree;
-    huffmanCode->codes = code;
-
-    return huffmanCode;
-}
-
-String *getCode(HuffmanCode *huffmanCode, char symbol)
-{
-    return huffmanCode->codes[symbol];
-}
-
-int frequency(HuffmanTree *tree)
-{
-    return tree->frequency;
-}
-
-void printTree(HuffmanTree *tree, std::ostream &stream)
-{
-    if (tree->isLeaf)
+    else if (tree[i] == '(')
     {
-        stream << '{' << tree->symbol << ", " << tree->frequency << '}';
-        return;
+        Node *node = createNode(0, tree[i + 1], nullptr, nullptr);
+        i += 3;
+        node->left = getNode(tree, i);
+        node->right = getNode(tree, i);
+        return node;
     }
-
-    stream << '(';
-    printTree(tree->left, stream);
-    printTree(tree->right, stream);
-    stream << ')';
-}
-
-void printHuffmanTree(HuffmanCode *huffmanCode, std::ostream &stream)
-{
-    printTree(huffmanCode->tree, stream);
-}
-
-void printHuffmanCodes(HuffmanCode *huffmanCode, std::ofstream &stream)
-{
-    stream << "\n";
-    for (int i = 0; i < maxSymbolCode; i++)
+    else
     {
-        if (huffmanCode->codes[i] != nullptr)
-        {
-            stream << (char) i << ": ";
-            printString(huffmanCode->codes[i], stream);
-            stream << "\n";
-        }
-    }
-}
-
-// huffman decode text input: huffman tree, text
-
-HuffmanTree *createHuffmanTree(std::ifstream &stream)
-{
-    char currentSymbol = stream.get();
-
-    if (currentSymbol == '{')
-    {
-        currentSymbol = stream.get();
-        HuffmanTree *newLeaf = createLeaf(currentSymbol, -1);
-        return newLeaf;
-    }
-
-    HuffmanTree *leftTree = createHuffmanTree(stream);
-    stream.get();
-    HuffmanTree *rightTree = createHuffmanTree(stream);
-    stream.get();
-    return mergeHuffmanTree(leftTree, rightTree);;
-}
-
-char decodeSymbol(std::ifstream &stream, HuffmanTree *tree)
-{
-    if (tree->isLeaf)
-        stream.get();
-
-    while (!tree->isLeaf && !stream.eof())
-    {
-        char symbol = stream.get();
-        if (symbol == '0')
-            tree = tree->left;
+        if (tree[i + 4] == ')')
+            i += 6;
         else
-            tree = tree->right;
+            i += 5;
+
+        return nullptr;
     }
-
-    if (tree->isLeaf)
-        return tree->symbol;
-
-    return '\n';
 }
 
-void decode(std::ifstream &input, std::ostream &output)
+void getChar(Node *node, int &i, char *code, ofstream &fout)
 {
-    HuffmanTree *huffmanTree = createHuffmanTree(input);
-    input.get();
-    input.get();
-    while (!input.eof())
-        output << decodeSymbol(input, huffmanTree);
+    if (isLeaf(node))
+    {
+        fout << node->symbol;
+        return;
+    }
 
-    deleteHuffmanTree(huffmanTree);
+    i++;
+    if (code[i] == '1')
+        getChar(node->right, i, code, fout);
+    else
+        getChar(node->left, i, code, fout);
+}
+
+void huffmanDecode(std::ifstream &fin, ofstream &fout)
+{
+    char *tree = new char[maxSize]{};
+    char *temp = new char[maxSize]{};
+
+    fin.getline(temp, maxSize, '\n');
+    strcat(tree, temp);
+    if (fin.get() == ' ')
+    {
+        strcat(tree, "\n ");
+        fin.getline(temp, maxSize, '\n');
+        strcat(tree, temp);
+    }
+    delete [] temp;
+    int i = 0;
+    Node *root = getNode(tree, i);
+    char *code = new char[maxSize]{};
+    fin >> code;
+    i = -1;
+    int size = strlen(code);
+    while (i < size - 1)
+    {
+        getChar(root, i, code, fout);
+    }
+
+    delete [] code;
+    delete [] tree;
+    deleteNode(root);
 }

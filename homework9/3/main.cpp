@@ -1,23 +1,25 @@
 #include <iostream>
 #include <fstream>
-
+#include <cstring>
+#include <fstream>
 #include "huffman.h"
-
 
 using namespace std;
 
 int main()
 {
-    ifstream inputFile;
-    inputFile.open("input.txt");
+    ifstream fin("input.txt");
+    ofstream fout("output.txt");
 
-    if (!inputFile.is_open())
+    if (!fin.good())
     {
-        cout << "File not found.\n";
-        return 0;
+        cout << "No input file";
+        return 1;
     }
 
-    decode(inputFile, cout);
-    inputFile.close();
+    huffmanDecode(fin, fout);
+
+    fin.close();
+    fout.close();
     return 0;
 }
