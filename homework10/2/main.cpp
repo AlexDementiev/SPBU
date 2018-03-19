@@ -47,6 +47,7 @@ void searchPattern(String *string, String *pattern)
             deleteString(current);
         }
     }
+    delete[] result;
 }
 
 int main()
