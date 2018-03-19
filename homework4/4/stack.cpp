@@ -1,40 +1,45 @@
 #include "stack.h"
 
-
-Stack *createStack() {
-    Stack *stack = new Stack{nullptr};
+Stack *createStack()
+{
+    Stack *stack = new Stack;
+    stack->head = nullptr;
     return stack;
 }
 
-bool isEmpty(Stack *stack) {
-    return stack->head == nullptr;
-}
-
-void push(Stack *stack, int value) {
-    if (isEmpty(stack)) {
-        stack->head = new StackElement{value,nullptr};
-        return;
-    }
-
-    StackElement *tmp = stack->head;
-    stack->head = new StackElement{value,tmp};
-    return;
-}
-int pop(Stack *stack) {
-    int result = -1;
-
-    if (!isEmpty(stack)) {
-        result = stack->head->value;
-        StackElement *tmp = stack->head;
-        stack->head = stack->head->next;
-        delete tmp;
-    }
-
-    return result;
-}
-
-void deleteStack(Stack *stack) {
+void deleteStack(Stack *stack)
+{
+    StackElement *tmp = nullptr;
     while (!isEmpty(stack))
-        pop(stack);
+    {
+        tmp = stack->head->next;
+        delete stack->head;
+        stack->head = tmp;
+    }
     delete stack;
+}
+
+int popInt(Stack *stack)
+{
+    if (isEmpty(stack))
+        return -1;
+
+    int value = stack->head->value;
+    StackElement *tmp = stack->head->next;
+    delete stack->head;
+    stack->head = tmp;
+    return value;
+}
+
+void pushInt(Stack *stack, int value)
+{
+    StackElement *newElement = new StackElement;
+    newElement->value = value;
+    newElement->next = stack->head;
+    stack->head = newElement;
+}
+
+bool isEmpty(Stack *stack)
+{
+    return stack->head == nullptr;
 }

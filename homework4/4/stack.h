@@ -1,19 +1,21 @@
 #pragma once
 
-struct StackElement{
+struct StackElement
+{
     int value;
     StackElement *next;
 };
 
-struct Stack{
+struct Stack
+{
     StackElement *head;
 };
 
 Stack *createStack();
 void deleteStack(Stack *stack);
 
-bool isEmpty(Stack *stack);
+int popInt(Stack *stack);
+void pushInt(Stack *stack, int value);
 
-void push(Stack *stack, int value);
-int pop(Stack *stack);
+bool isEmpty(Stack *stack);
 

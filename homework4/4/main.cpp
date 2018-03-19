@@ -3,31 +3,55 @@
 
 using namespace std;
 
-void inputCharacter(){
-    char character = ' ';
-    Stack *stack = createStack();
-    cin.get(character);
-
-    while (character != '\n') {
-        if (character >= '0' && character <= '9')
-            push(stack,character - '0');
-        switch (character) {
-            case '+' : push(stack,pop(stack) + pop(stack)); break;
-            case '-' : push(stack,pop(stack) - pop(stack)); break;
-            case '*' : push(stack,pop(stack) * pop(stack)); break;
-            case '/' : push(stack,pop(stack) / pop(stack)); break;
-        }
-        cin.get(character);
-    }
-
-    cout << "\n";
-    cout <<"The answer is: " << pop(stack);
-
-    deleteStack(stack);
+bool isOperator(char symbol)
+{
+    return symbol == '+' || symbol == '-' || symbol == '*' || symbol == '/';
 }
 
-int main(){
-    cout << "Enter expression: ";
-    inputCharacter();
+int operation(int firstOperand, int secondOperand, char operation)
+{
+    switch (operation)
+    {
+        case '+':
+            return firstOperand + secondOperand;
+        case '-':
+            return firstOperand - secondOperand;
+        case '*':
+            return firstOperand * secondOperand;
+        case '/':
+            return firstOperand / secondOperand;
+    }
+}
+
+bool isDigit(char symbol)
+{
+    return '0' <= symbol && symbol <= '9';
+}
+
+int main()
+{
+    Stack *stack = createStack();
+    cout << "Enter an expression in postfix form: " << endl;
+
+    char currentSymbol = '\0';
+    cin.get(currentSymbol);
+    while (currentSymbol != '\n')
+    {
+        if (isDigit(currentSymbol))
+            pushInt(stack, currentSymbol - '0');
+
+        if (isOperator(currentSymbol))
+        {
+            int secondOperand = popInt(stack);
+            int firstOperand = popInt(stack);
+            pushInt(stack, operation(firstOperand, secondOperand, currentSymbol));
+        }
+
+        cin.get(currentSymbol);
+    }
+
+    cout << "= " << popInt(stack);
+
+    deleteStack(stack);
     return 0;
 }
