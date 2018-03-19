@@ -15,7 +15,6 @@ int main()
     printInfixForm(expression);
     cout << "Result: " << calculate(expression) << endl;
 
-    clearTree(expression);
     fin.close();
 
     clearTree(expression);
