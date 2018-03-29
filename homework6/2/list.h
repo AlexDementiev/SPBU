@@ -1,25 +1,17 @@
 #pragma once
 
-struct ListElement
-{
-    ListElement *next;
-    int value;
-};
-
-struct List
-{
-    ListElement *head;
-    int dimension;
-};
+struct List;
 
 List *createList();
-void clearList(List *list);
+void deleteList(List *list);
 
+void addAfterHead(List *list, int value);
+
+// Switches head to next element
+void switchToNext(List *list);
+
+// Deletes head's next element
+int deleteNext(List *list);
+
+bool hasOneElement(List *list);
 bool isEmpty(List *list);
-bool isSiple(List *list);
-
-void add(List *list, int value);
-void deleteElement(List *list, int value);
-
-int listSize(List *list);
-int firstElement(List *list);

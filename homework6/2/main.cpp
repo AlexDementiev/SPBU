@@ -3,43 +3,25 @@
 
 using namespace std;
 
-void buildList(List *list, int size)
-{
-    int counter = 1;
-    while (counter <= size)
-    {
-        add(list, counter);
-        counter++;
-    }
-    return;
-}
-
 int main()
 {
-    cout << "Enter the number of soldiers and the number of the retring soldier: ";
-    int n = 0;
-    int m = 0;
-    cin >> n >> m;
+    int warriorsNumber = 0;
+    int skipNumber = 0;
+    cout << "Enter the number of warriors and the number to be skipped: ";
+    cin >> warriorsNumber >> skipNumber;
 
     List *warriors = createList();
-    buildList(warriors, n);
+    for (int i = warriorsNumber; i > 0; i--)
+        addAfterHead(warriors, i);
 
-    int index = 0;
-    if (m > n)
-         index = m % n;
-    else
-        index = m;
-
-    while (!isSiple(warriors))
+    while (!hasOneElement(warriors))
     {
-        if (m > listSize(warriors))
-            index = m % listSize(warriors);
-        if (index == 0)
-            index = listSize(warriors);
-        deleteElement(warriors, index);
+        for (int j = 0; j < skipNumber - 1; j++)
+            switchToNext(warriors);
+        deleteNext(warriors);
     }
-    cout <<"The position of the surviving soldier: " <<  firstElement(warriors);
-    clearList(warriors);
 
+    cout << "The warrior number " << deleteNext(warriors) << " won't be killed" << endl;
+    deleteList(warriors);
     return 0;
 }
