@@ -1,136 +1,68 @@
 #include <iostream>
-#include <fstream>
-#include "list.h"
+#include "phonebase.h"
 
 using namespace std;
 
-void runMenu()
+char *input()
 {
-    cout << "****************************************\n";
-    cout << "select one of the menu items: \n";
-    cout << "0 - sign out.\n";
-    cout << "1 - add an entry (name and phone).\n";
-    cout << "2 - find the phone by name.\n";
-    cout << "3 - find the name by phone.\n";
-    cout << "4 - save the current data to a file.\n";
-    cout << "****************************************\n";
-}
-
-ListElement *inputNewContact()
-{
-    ListElement *tmp = new ListElement;
-
-    char *name = new char[50]{'\0'};
-    cout << "Enter the name: ";
-    cin >> name;
-    tmp->name = name;
-
-    char *number = new char[50]{'\0'};
-    cout << "Enter the number: ";
-    cin >> number;
-    tmp->number = number;
-
-    return tmp;
-}
-
-void getNumber(List *list)
-{
-    char *name = new char[50]{'\0'};
-    cout << "Enter the name: ";
-    cin >> name;
-
-    ListElement *tmp = get(list,name);
-    if (tmp == nullptr)
-        cout << "This contact does not exist." << endl;
-    else
-        cout << "Found number: " << tmp->number << endl;
-}
-
-void getName(List *list)
-{
-    char *number = new char[50]{'\0'};
-    cout << "Enter the number: ";
-    cin >> number;
-
-    ListElement *tmp = get(list,number);
-    if (tmp == nullptr)
-        cout << "This contact does not exist." << endl;
-    else
-        cout << "The name is: " << tmp->name << endl;
+    char *line = new char[maxLength];
+    cin.getline(line, maxLength);
+    return line;
 }
 
 int main()
 {
-    ifstream input("PhoneBook.txt");
-    List *phoneBook = createList();
+    Base *base = load();
+    cout << "Phone base: " << endl;
+    cout << "0 - Exit" << endl;
+    cout << "1 - Add" << endl;
+    cout << "2 - Find phone" << endl;
+    cout << "3 - Find name" << endl;
+    cout << "4 - Save" << endl;
+    char choice = '\0';
 
-    if (input.is_open())
+    cin.get(choice);
+    cin.ignore();
+    while (choice != '0')
     {
-        while (input)
+        char *name = nullptr;
+        char *phone = nullptr;
+        switch (choice)
         {
-            ListElement *newContact = new ListElement;
+            case '1':
+                cout << "Enter name: " << endl;
+                name = input();
+                cout << "Enter phone: " << endl;
+                phone = input();
+                add(base, name, phone);
+                cout << "OK" << endl;
+                break;
 
-            char *newName = new char[50]{'\0'};
-            input >> newName;
-            if (newName[0] == '\0')
-                continue;
-            newContact->name = newName;
+            case '2':
+                cout << "Enter name: " << endl;
+                name = input();
+                cout << findPhone(base, name) << endl;
+                delete[] name;
+                break;
 
-            char *newNumber = new char[50]{'\0'};
-            input >> newNumber;
-            newContact->number = newNumber;
+            case '3':
+                cout << "Enter phone: " << endl;
+                phone = input();
+                cout << findName(base, phone) << endl;
+                delete[] phone;
+                break;
 
-            add(phoneBook,newContact);
+            case '4':
+                save(base);
+                cout << "OK" << endl;
+                break;
+
+            default:
+                cout << "Unknown command" << endl;
         }
+        cin.get(choice);
+        cin.ignore();
     }
-
-    input.close();
-
-    runMenu();
-
-    int userChoise = -1;
-    bool flag = true;
-    while (flag)
-    {
-        cin >> userChoise;
-        if (userChoise == 0)
-            flag = false;
-
-        if (userChoise > 0 && userChoise < 5)
-        {
-            switch (userChoise)
-            {
-                case 1 :
-                    add(phoneBook,inputNewContact()); break;
-                case 2 :
-                    getNumber(phoneBook); break;
-                case 3 :
-                    getName(phoneBook); break;
-                case 4 :
-                {
-                    ofstream output("PhoneBook.txt");
-
-                    ListElement *tmp = phoneBook->head;
-                    while (tmp != nullptr)
-                    {
-                        output << tmp->name << " " << tmp->number << "\n";
-                        tmp = tmp->next;
-                    }
-
-                    output.close();
-                    break;
-                }
-            }
-        }
-        else if (userChoise != 0)
-        {
-            cout << "Invalid data, try again :(\n";
-            continue;
-        }
-    }
-
-    deleteList(phoneBook);
-
-        
+    clear(base);
     return 0;
 }
