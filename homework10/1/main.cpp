@@ -53,6 +53,8 @@ void deleteMap(Map *map)
             deleteTile(map->set[i][j]);
         delete[] map->set[i];
     }
+    delete[] map->set;
+    delete map;
 }
 
 int euristic(int x, int y, int finishX, int finishY)

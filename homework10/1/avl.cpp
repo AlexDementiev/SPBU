@@ -136,7 +136,7 @@ void clearNode(AVLNode *node)
 void clearTree(AVLTree *tree)
 {
     clearNode(tree->root);
-    tree->root = nullptr;
+    delete tree;
 }
 
 bool containsNode(AVLNode *node, Tile *value)
