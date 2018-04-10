@@ -2,24 +2,19 @@
 
 #include "tile.h"
 
-struct AVLNode;
-
-struct AVLTree
-{
-    AVLNode *root;
-};
+struct AVLTree;
 
 AVLTree *createTree();
-void clearTree(AVLTree *tree);
+void deleteTree(AVLTree *tree);
 
 bool contains(AVLTree *tree, Tile *value);
 void add(AVLTree *tree, Tile *value);
-void removeTile(AVLTree *tree, Tile *value);
+void remove(AVLTree *tree, Tile *value);
 Tile *getMin(AVLTree *tree);
 
 bool isEmpty(AVLTree *tree);
-bool isSimple(AVLTree *tree); // queue has one element
+bool hasOneElement(AVLTree *tree);
 
 void printLeft(AVLTree *tree);
 void printTree(AVLTree *tree);
-void printRigth(AVLTree *tree);
+void printRight(AVLTree *tree);

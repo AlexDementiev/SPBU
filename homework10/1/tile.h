@@ -2,22 +2,20 @@
 
 struct Tile;
 
-Tile *createTile(bool isFree, int x, int y);
+Tile *newTile(bool isFree, int i, int j);
 void deleteTile(Tile *tile);
 
 void setVisited(Tile *tile);
+void setPrevios(Tile *tile, Tile *previous);
 void setInPath(Tile *tile);
-void setPrevious(Tile *tile, Tile *previous);
-void setDistance(Tile *tile, int distance);
 void setPriority(Tile *tile, int priority);
+void setDistance(Tile *tile, int distance);
 
-bool isFree(Tile *tile);
 bool isVisited(Tile *tile);
 bool isInPath(Tile *tile);
-
+bool isFree(Tile *tile);
 int priority(Tile *tile);
 int distance(Tile *tile);
-int getX(Tile *tile);
-int getY(Tile *tile);
-
+int tileX(Tile *tile);
+int tileY(Tile *tile);
 Tile *previous(Tile *tile);

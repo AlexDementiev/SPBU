@@ -1,12 +1,18 @@
 #include <iostream>
 #include "avl.h"
 
+
 struct AVLNode
 {
     Tile *value;
     int height;
     AVLNode *left;
-    AVLNode *rigth;
+    AVLNode *right;
+};
+
+struct AVLTree
+{
+    AVLNode *root;
 };
 
 AVLTree *createTree()
@@ -23,13 +29,12 @@ void printLeftNode(AVLNode *node)
 
     printLeftNode(node->left);
     std::cout << node->value << " ";
-    printLeftNode(node->rigth);
+    printLeftNode(node->right);
 }
 
 void printLeft(AVLTree *tree)
 {
     printLeftNode(tree->root);
-    std::cout << "\n";
 }
 
 void printTreeNode(AVLNode *node)
@@ -42,30 +47,28 @@ void printTreeNode(AVLNode *node)
 
     std::cout << "(" << node->value << " ";
     printTreeNode(node->left);
-    printTreeNode(node->rigth);
+    printTreeNode(node->right);
     std::cout << ")";
 }
 
 void printTree(AVLTree *tree)
 {
     printTreeNode(tree->root);
-    std::cout << "\n";
 }
 
-void printRigthNode(AVLNode *node)
+void printRightNode(AVLNode *node)
 {
     if (node == nullptr)
         return;
 
-    printRigthNode(node->rigth);
-    std::cout << node->value;
-    printRigthNode(node->left);
+    printRightNode(node->right);
+    std::cout << node->value << " ";
+    printRightNode(node->left);
 }
 
-void printRigth(AVLTree *tree)
+void printRight(AVLTree *tree)
 {
-    printRigthNode(tree->root);
-    std::cout << "\n'";
+    printRightNode(tree->root);
 }
 
 int height(AVLNode *node)
@@ -73,23 +76,23 @@ int height(AVLNode *node)
     return node ? node->height : 0;
 }
 
-int balanceFaktor(AVLNode *node)
+int balanceFactor(AVLNode *node)
 {
-    return height(node->rigth) - height(node->left);
+    return height(node->right) - height(node->left);
 }
 
 void updateHeight(AVLNode *node)
 {
     int heightLeft = height(node->left);
-    int heightRigth = height(node->rigth);
-    node->height = ((heightRigth > heightLeft) ? heightRigth : heightLeft) + 1;
+    int heightRight = height(node->right);
+    node->height = ((heightLeft > heightRight) ? heightLeft : heightRight) + 1;
 }
 
-void rotateRigth(AVLNode *&root)
+void rotateRight(AVLNode *&root)
 {
-    AVLNode *pivot = root->left;
-    root->left = pivot->rigth;
-    pivot->rigth = root;
+    AVLNode* pivot = root->left;
+    root->left = pivot->right;
+    pivot->right = root;
     updateHeight(root);
     updateHeight(pivot);
     root = pivot;
@@ -97,8 +100,8 @@ void rotateRigth(AVLNode *&root)
 
 void rotateLeft(AVLNode *&root)
 {
-    AVLNode *pivot = root->rigth;
-    root->rigth = pivot->left;
+    AVLNode* pivot = root->right;
+    root->right = pivot->left;
     pivot->left = root;
     updateHeight(root);
     updateHeight(pivot);
@@ -109,33 +112,37 @@ void balance(AVLNode *&node)
 {
     updateHeight(node);
 
-    if (balanceFaktor(node) == 2)
+    if (balanceFactor(node) == 2)
     {
-        if (balanceFaktor(node->rigth) < 0)
-            rotateRigth(node->rigth);
+        if (balanceFactor(node->right) < 0)
+            rotateRight(node->right);
+
         rotateLeft(node);
     }
-    if (balanceFaktor(node) == -2)
+
+    if (balanceFactor(node) == -2)
     {
-        if (balanceFaktor(node->left) > 0)
+        if (balanceFactor(node->left) > 0)
             rotateLeft(node->left);
-        rotateRigth(node);
+
+        rotateRight(node);
     }
 }
 
-void clearNode(AVLNode *node)
+
+void deleteNode(AVLNode *node)
 {
     if (node == nullptr)
         return;
 
-    clearNode(node->left);
-    clearNode(node->rigth);
+    deleteNode(node->left);
+    deleteNode(node->right);
     delete node;
 }
 
-void clearTree(AVLTree *tree)
+void deleteTree(AVLTree *tree)
 {
-    clearNode(tree->root);
+    deleteNode(tree->root);
     delete tree;
 }
 
@@ -147,10 +154,10 @@ bool containsNode(AVLNode *node, Tile *value)
     if (node->value == value)
         return true;
 
-    if (node->value > value)
+    if (priority(value) < priority(node->value))
         return containsNode(node->left, value);
     else
-        return containsNode(node->rigth, value);
+        return containsNode(node->right, value);
 }
 
 bool contains(AVLTree *tree, Tile *value)
@@ -163,7 +170,7 @@ AVLNode *createNode(Tile *value)
     AVLNode *node = new AVLNode;
     node->value = value;
     node->left = nullptr;
-    node->rigth = nullptr;
+    node->right = nullptr;
     updateHeight(node);
     return node;
 }
@@ -177,9 +184,10 @@ void addNode(AVLNode *&node, Tile *value)
         return;
 
     if (priority(value) < priority(node->value))
+
         addNode(node->left, value);
     else
-        addNode(node->rigth, value);
+        addNode(node->right, value);
 
     balance(node);
 }
@@ -191,8 +199,8 @@ void add(AVLTree *tree, Tile *value)
 
 AVLNode *findMax(AVLNode *node)
 {
-    while (node->rigth != nullptr)
-        node = node->rigth;
+    while (node->right != nullptr)
+        node = node->right;
     return node;
 }
 
@@ -203,18 +211,18 @@ void removeNode(AVLNode *&node, Tile *value)
 
     if (node->value == value)
     {
-        if (node->left == nullptr && node->rigth == nullptr)
+        if (node->left == nullptr && node->right == nullptr)
         {
             delete node;
             node = nullptr;
         }
         else if (node->left == nullptr)
         {
-            AVLNode *temp = node->rigth;
+            AVLNode *temp = node->right;
             delete node;
             node = temp;
         }
-        else if (node->rigth == nullptr)
+        else if (node->right == nullptr)
         {
             AVLNode *temp = node->left;
             delete node;
@@ -222,7 +230,7 @@ void removeNode(AVLNode *&node, Tile *value)
         }
         else
         {
-            AVLNode *maxNode = findMax(node);
+            AVLNode *maxNode = findMax(node->left);
             Tile *maxValue = maxNode->value;
             removeNode(node, maxValue);
             node->value = maxValue;
@@ -234,12 +242,11 @@ void removeNode(AVLNode *&node, Tile *value)
     if (priority(value) < priority(node->value))
         removeNode(node->left, value);
     else
-        removeNode(node->rigth, value);
-
+        removeNode(node->right, value);
     balance(node);
 }
 
-void removeTile(AVLTree *tree, Tile *value)
+void remove(AVLTree *tree, Tile *value)
 {
     removeNode(tree->root, value);
 }
@@ -249,12 +256,12 @@ bool isEmpty(AVLTree *tree)
     return tree->root == nullptr;
 }
 
-bool isSimple(AVLTree *tree)
+bool hasOneElement(AVLTree *tree)
 {
-    return !isEmpty(tree) && tree->root->left == nullptr && tree->root->rigth == nullptr;
+    return !isEmpty(tree) && tree->root->left == nullptr && tree->root->right == nullptr;
 }
 
-Tile *getMin(AVLTree * tree)
+Tile *getMin(AVLTree *tree)
 {
     if (isEmpty(tree))
         return nullptr;

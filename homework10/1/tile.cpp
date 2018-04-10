@@ -1,35 +1,32 @@
 #include "tile.h"
 
-
-int const infinity = 1000000000;
+int const inf = 2000000000;
 
 struct Tile
 {
     bool isFree;
     bool isVisited;
+    Tile *previous;
     bool isInPath;
-
     int priority;
     int distance;
+
     int x;
     int y;
-
-    Tile *previous;
 };
 
-Tile *createTile(bool isFree, int x, int y)
+Tile *newTile(bool isFree, int i, int j)
 {
-    Tile *newTile = new Tile;
-    newTile->isFree = isFree;
-    newTile->isInPath = false;
-    newTile->isVisited = false;
-    newTile->distance = infinity;
-    newTile->priority = infinity;
-    newTile->x = x;
-    newTile->y = y;
-    newTile->previous = nullptr;
-
-    return newTile;
+    Tile *tile = new Tile;
+    tile->isFree = isFree;
+    tile->isInPath = false;
+    tile->isVisited = false;
+    tile->previous = nullptr;
+    tile->priority = inf;
+    tile->distance = inf;
+    tile->x = i;
+    tile->y = j;
+    return tile;
 }
 
 void deleteTile(Tile *tile)
@@ -42,29 +39,19 @@ void setVisited(Tile *tile)
     tile->isVisited = true;
 }
 
+void setPrevios(Tile *tile, Tile *previous)
+{
+    tile->previous = previous;
+}
+
 void setInPath(Tile *tile)
 {
     tile->isInPath = true;
 }
 
-void setPrevious(Tile *tile, Tile *previous)
-{
-    tile->previous = previous;
-}
-
-void setDistance(Tile *tile, int distance)
-{
-    tile->distance = distance;
-}
-
 void setPriority(Tile *tile, int priority)
 {
     tile->priority = priority;
-}
-
-bool isFree(Tile *tile)
-{
-    return tile->isFree;
 }
 
 bool isVisited(Tile *tile)
@@ -82,22 +69,32 @@ int priority(Tile *tile)
     return tile->priority;
 }
 
+Tile *previous(Tile *tile)
+{
+    return tile->previous;
+}
+
+void setDistance(Tile *tile, int distance)
+{
+    tile->distance = distance;
+}
+
 int distance(Tile *tile)
 {
     return tile->distance;
 }
 
-int getX(Tile *tile)
+int tileX(Tile *tile)
 {
     return tile->x;
 }
 
-int getY(Tile *tile)
+int tileY(Tile *tile)
 {
     return tile->y;
 }
 
-Tile *previous(Tile *tile)
+bool isFree(Tile *tile)
 {
-    return tile->previous;
+    return tile->isFree;
 }
